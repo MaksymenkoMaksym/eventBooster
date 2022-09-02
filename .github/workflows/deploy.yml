@@ -11,17 +11,20 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
 
+      - name: Install 🔧
+        run: |
+          npm i
 
-      - name: Env
+      - name: 'Create env file'
         run: |
           touch .env
-          echo api =${{secrets.API}} >> .env
+          echo keyMaks = ${{ secrets.KEYMAKS }} >> .env
+          echo keyDenys = ${{ secrets.KEYDENYS}} >> .env
+          echo fireBaseConfig = ${{ secrets.FIREBASECONFIG }} >> .env
           cat .env
 
-
-      - name: Install and Build 🔧
+      - name: Build 🔧
         run: |
-          npm ci
           npm run build
 
       - name: Deploy 🚀
