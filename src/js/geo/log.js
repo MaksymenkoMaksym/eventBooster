@@ -6,18 +6,11 @@ import {
     signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, GithubAuthProvider
 } from "firebase/auth";
 import { getDatabase, ref, set, child, get, update, push } from "firebase/database";
+//
+import { config } from '../const'
 import { clearAfterSignOut } from "../basket" //clean basket
 //Файл настройок для ФАЯБЕЙЗА з акаунту
-const firebaseConfig = {
-    apiKey: "AIzaSyA1qR_n73lnbDIB96TfK_yMCuERhUDCeuA",
-    // authDomain: "goitprojects26.github.io",
-    authDomain: "image-search-6ffc6.firebaseapp.com",
-    databaseURL: "https://image-search-6ffc6-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "image-search-6ffc6",
-    storageBucket: "image-search-6ffc6.appspot.com",
-    messagingSenderId: "994814055923",
-    appId: "1:994814055923:web:2086f5ea88785c66926e86"
-};
+const firebaseConfig = config;
 // Initialize Firebase в коді на сайті 
 const app = initializeApp(firebaseConfig);
 // створння сутності для реєстрації

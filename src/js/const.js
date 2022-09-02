@@ -1,3 +1,7 @@
 require('dotenv').config()
-console.log(process.env.api);
-export const api = process.env.api;
+export const keyMaks = process.env.keyMaks;
+export const keyDenys = process.env.keyDenys;
+export const config = JSON.parse(process.env.fireBaseConfig);
+
+
+console.log(config);

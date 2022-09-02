@@ -1,14 +1,14 @@
 import axios from 'axios';
+import { keyMaks, keyDenys } from "./const"
 
 const BASE_URL = 'https://app.ticketmaster.com/discovery/v2/';
 const source = 'events';
-const API_KEY = '5HiPtCjBuAY9gthoMA0oQuJCLkmuGiMG';
-// const API_KEY = '6iAtgNGAR43W6F7x79CI9WmegarTMZK1';
+const API_KEY = keyMaks;
 
 export class EventApi {
   static config = {
     // `url` is the server URL that will be used for the request
-    url: 'events',
+    url: source,
     // `method` is the request method to be used when making the request
     method: 'get', // default
     // `baseURL` will be prepended to `url` unless `url` is absolute.
@@ -29,20 +29,12 @@ export class EventApi {
       preferredCountry: '', //Popularity boost by country, default is us ["us", "ca"]
       geoPoint: '',
     },
-    // `timeout` specifies the number of milliseconds before the request times out.
-    // If the request takes longer than `timeout`, the request will be aborted.
-    // timeout: 3000, // default is `0` (no timeout)
-
-    // `responseType` indicates the type of data that the server will respond with
-    // options are: 'arraybuffer', 'document', 'json', 'text', 'stream'
-    //   browser only: 'blob'
     responseType: 'json', // default
   };
   constructor() { }
   static async fetchApiData() {
     const responce = await axios.request(this.config);
     const data = responce.data;
-    // localStorage.setItem('event', JSON.stringify(data));
     return data;
   }
   static setCountry(country) {
@@ -66,12 +58,6 @@ export class EventApi {
   static setPreferredCountry(countryCode) {
     this.config.params.preferredCountry =
       this.config.params.preferredCountry.push(`${countryCode}`);
-  }
-  static async getMoreDataById(id) {
-    const url = `${BASE_URL}${source}/${id}.json?apikey=${API_KEY}`;
-    const responce = await fetch(url);
-    const data = await responce.json();
-    return data;
   }
   static async getById(id) {
     const url = `${BASE_URL}${source}/${id}.json?apikey=${API_KEY}`;
