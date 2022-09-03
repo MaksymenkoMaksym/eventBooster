@@ -21,13 +21,18 @@ function onClickBasketHead(event) {
 function onBasketShow() {
     document.body.classList.toggle("no-scroll");
     refs.basketModal.classList.toggle("hidden");
+
     refs.basketQuantity.textContent = userBasket.totalQuantity;
     refs.basketNum.textContent = userBasket.totalQuantity;
+
     renderBasketMarkup(userBasket.contentShoppingCart)/// Данные с именем события
+
     refs.basketBackdrop.addEventListener("click", onClickBasketBackdrop)
     window.addEventListener("keydown", onEscKeyPressBasket);
+
     if (!userBasket.isBasketEmpty) {
-        if (refs.basketContainer.classList.contains("hidden")) refs.basketContainer.classList.remove("hidden");
+        /* if (refs.basketContainer.classList.contains("hidden"))*/
+        refs.basketContainer.classList.remove("hidden");
         onBasketFull()
     } else { onBasketEmpty() }
 }
@@ -54,6 +59,7 @@ function updateBasket() {
 function onBasketEmpty() {
     disabledElement(refs.basketBuyBtn);
     disabledElement(refs.basketClearBtn);
+
     refs.basketTextFull.classList.add("hidden");
     refs.basketTextEmpty.classList.remove("hidden");
     refs.basketQuantity.innerHTML = ""
@@ -68,7 +74,7 @@ function onBasketEmpty() {
     }
 }
 
-function deleteLocalStorage () {
+function deleteLocalStorage() {
     localStorage.removeItem("userBasket");
 }
 
@@ -107,7 +113,7 @@ function onEscKeyPressBasket(event) {
 
 let userBasket = {};
 loadPage()
-function localStorageCheck () {
+function localStorageCheck() {
     if (!localStorage.getItem("userBasket")) return userBasket = new Basket; //должно создаваться при загрузке Фетча
     const oldUserBasket = (JSON.parse(localStorage.getItem("userBasket")))
     userBasket = new Basket;
@@ -140,7 +146,7 @@ function onClickBasketContinueShoppingBtn(event) {
     onBasketClose()
 }
 
-function addToLocalStorage (obj) {
+function addToLocalStorage(obj) {
     localStorage.setItem("userBasket", JSON.stringify(obj));
 }
 
@@ -174,29 +180,29 @@ function onClickClearBtn(event) {
     deleteTimer(timerId)
 }
 
-export function clearAfterSignOut () {
+export function clearAfterSignOut() {
     userBasket.clearList()
     refs.basketQuantity.innerHTML = userBasket.totalQuantity
     refs.basketNumHead.innerHTML = userBasket.totalQuantity
     refs.basketMarkupContainer.innerHTML = "";
     deleteLocalStorage();
     userBasket.isBasketEmpty = true;
-    if(!refs.basketContainerHead.classList.contains("hidden")) refs.basketContainerHead.classList.add("hidden")
-    if(!refs.basketContainer.classList.contains("hidden")) refs.basketContainer.classList.add("hidden")
+    if (!refs.basketContainerHead.classList.contains("hidden")) refs.basketContainerHead.classList.add("hidden")
+    if (!refs.basketContainer.classList.contains("hidden")) refs.basketContainer.classList.add("hidden")
     onBasketEmpty();
     // deleteTimer(timerId)
 }
 
 refs.basketMarkupContainer.addEventListener("click", onClickDeleteButton);
 function onClickDeleteButton(event) {
-  if(event.target.closest(".close__box") === null) return;
-  event.target.closest("LI").dataset.id
-  for (let i = 0; i <= userBasket.contentShoppingCart.length - 1; i +=1) {
-    if (userBasket.contentShoppingCart[i].id === event.target.closest("LI").dataset.id){
-        userBasket.contentShoppingCart.splice(i, 1)
-        userBasket.decreaseStandardQuantity()
-        break;
+    if (event.target.closest(".close__box") === null) return;
+    event.target.closest("LI").dataset.id
+    for (let i = 0; i <= userBasket.contentShoppingCart.length - 1; i += 1) {
+        if (userBasket.contentShoppingCart[i].id === event.target.closest("LI").dataset.id) {
+            userBasket.contentShoppingCart.splice(i, 1)
+            userBasket.decreaseStandardQuantity()
+            break;
+        }
     }
-  }
-  updateBasket()
+    updateBasket()
 }

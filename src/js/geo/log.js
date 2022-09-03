@@ -206,9 +206,6 @@ function writeUserData(userId = 0, user) {
 // })
 
 //Доповнення інформації без витирання внесеної інформації
-// const writeNew = document.querySelector('#writeNewPost');
-// writeNew.addEventListener('click', () => writeNewPost());
-
 export function writeNewPost(postData = {}) {
   if (!auth) {
     return console.log('зайдіть в аккаунт 111');
@@ -227,23 +224,13 @@ export function writeNewPost(postData = {}) {
       concertHall: postData._embedded.venues[0].name,
     };
 
-    // console.log(mini);
-    // A post entry.
-    // const postData = {
-    //     aaaauthor: 'username',
-    //     body: 'body',
-    //     title: 'title',
-    //     starCount: 0,
-    //     authorPic: 'picture'
-    // };
-
     // Get a key for a new Post.
     const newPostKey = push(child(ref(db), `users/`)).key;
     // console.log(newPostKey);
     // Write the new post's data simultaneously in the posts list and the user's post list.
     const updates = {};
     // updates['/posts/' + newPostKey] = postData;
-    updates['users/' + userId] = mini;
+    updates['users/' + userId + '/' + newPostKey] = mini;
     // updates['/user-posts/' + uid + '/' + newPostKey] = postData;
 
     return update(ref(db), updates);
