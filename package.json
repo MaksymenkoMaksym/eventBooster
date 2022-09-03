@@ -2,14 +2,14 @@
   "name": "test",
   "version": "2.0.0",
   "description": "",
-  "homepage": "https://goitprojects26.github.io/Project-Eventbooster/",
+  "homepage": "https://github.com/MaksymenkoMaksym/eventBooster",
   "scripts": {
     "start": "parcel src/*.html",
-    "build": "parcel build src/*.html --public-url /Project-Eventbooster/"
+    "build": "parcel build src/*.html --public-url /eventBooster/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://goitprojects26.github.io/Project-Eventbooster.git"
+    "url": "git+https://github.com/MaksymenkoMaksym/eventBooster.git"
   },
   "keywords": [],
   "author": "_5-Elements",
