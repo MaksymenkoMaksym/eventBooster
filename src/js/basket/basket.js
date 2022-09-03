@@ -1,8 +1,10 @@
-import { refs } from "./refs";
+import { auth } from '../geo/log'
+import { refs } from "../refs";
 export { userBasket, onClickBasketBackdrop, onEscKeyPressBasket, ESC_KEY_CODE, onBasketShow, updateBasket, addToLocalStorage }
 import Basket from "./class_basket";
 import { deleteTimer, timerDisplay } from './timer';
 import { renderBasketMarkup } from "./basket_render";
+import { readDataFromServer } from '../geo/log'
 
 const ESC_KEY_CODE = "Escape";
 
@@ -13,25 +15,27 @@ function setTimer(basketObj) {
     }, basketObj.step);
 }
 
-refs.basketHead.addEventListener("click", onClickBasketHead);
-function onClickBasketHead(event) {
-    onBasketShow()
-}
+refs.basketHead.addEventListener("click", onBasketShow);
 
-function onBasketShow() {
+async function onBasketShow() {
+    let re = await readDataFromServer(auth)
+    console.log(...re);
+    // console.log(res);
+
     document.body.classList.toggle("no-scroll");
     refs.basketModal.classList.toggle("hidden");
 
     refs.basketQuantity.textContent = userBasket.totalQuantity;
     refs.basketNum.textContent = userBasket.totalQuantity;
+    renderBasketMarkup(re)/// Данные с именем события
 
-    renderBasketMarkup(userBasket.contentShoppingCart)/// Данные с именем события
+    // renderBasketMarkup(userBasket.contentShoppingCart)/// Данные с именем события
 
     refs.basketBackdrop.addEventListener("click", onClickBasketBackdrop)
     window.addEventListener("keydown", onEscKeyPressBasket);
 
     if (!userBasket.isBasketEmpty) {
-        /* if (refs.basketContainer.classList.contains("hidden"))*/
+        /*  if (refs.basketContainer.classList.contains("hidden"))*/
         refs.basketContainer.classList.remove("hidden");
         onBasketFull()
     } else { onBasketEmpty() }
@@ -112,6 +116,7 @@ function onEscKeyPressBasket(event) {
 }
 
 let userBasket = {};
+
 loadPage()
 function localStorageCheck() {
     if (!localStorage.getItem("userBasket")) return userBasket = new Basket; //должно создаваться при загрузке Фетча
@@ -158,6 +163,7 @@ function onBasketClose() {
 }
 
 refs.basketBuyBtn.addEventListener("click", onClickBuyBtn)
+
 function onClickBuyBtn(event) {
     userBasket.contentShoppingCart.forEach(id => {
         clearTimeout(id)

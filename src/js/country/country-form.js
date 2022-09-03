@@ -1,7 +1,7 @@
 import { refs } from '../refs';
 import { EventApi } from '../api';
 import { renderMarckup } from '../renderHtml';
-import { countryCodes } from '../country/countryList';
+import { countryCodes } from './countryList';
 
 refs.countryForm.addEventListener('change', onCountrySearch);
 refs.countryInput.addEventListener('mouseenter', onCountryFormReset);

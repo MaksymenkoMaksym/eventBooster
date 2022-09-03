@@ -1,6 +1,5 @@
-import { EventApi } from './api';
-import { renderMarckup } from './renderHtml';
-import { renderMarckupFromLocalStorage } from './renderHtml';
+import { EventApi } from '../api';
+import { renderMarckup } from '../renderHtml';
 
 const ref = {
   paginatedList: document.querySelector('.paginated__list'),
@@ -29,8 +28,7 @@ export function pag1(totalPages) {
   if (after && before) {
     arr.push(`<li class="paginated__item" data-page="0">1</li>`);
     arr.push(
-      `<li class="paginated__item  forward__item" data-page="${
-        after - 2
+      `<li class="paginated__item  forward__item" data-page="${after - 2
       }">...</li>`
     );
     for (let i = after + 1; i < before; i++) {
