@@ -1,7 +1,7 @@
 import { refs } from './refs';
 import { openModal } from './modal';
 import { closeModal } from './modal';
-import { dataToCart } from './addtocart';
+import { dataToCart } from './basket/addtocart';
 import { EventApi } from './api';
 import { renderMarckup } from './renderHtml';
 import {

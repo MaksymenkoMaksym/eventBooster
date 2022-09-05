@@ -1,8 +1,7 @@
 import { Geohash } from './geo/hash';
 import { refs } from './refs';
 import { EventApi } from './api';
-import { pag1 } from './pagination';
-import { createPaginationOnLoad } from './pagination/pag';
+import { pag1 } from './pagination/pagination';
 
 const iconLocation = `
  <svg class="location_icon" width="6" height="9" xmlns="http://www.w3.org/2000/svg"><path d="M3 0C1.346 0 0 1.403 0 3.128 0 5.296 3.003 9 3.003 9S6 5.19 6 3.128C6 1.403 4.654 0 3 0Zm.905 4.044c-.25.26-.577.39-.905.39a1.25 1.25 0 0 1-.905-.39c-.5-.52-.5-1.367 0-1.887a1.246 1.246 0 0 1 1.81 0c.5.52.5 1.367 0 1.887Z"/></svg>`;
@@ -14,11 +13,12 @@ export async function renderMarckup() {
   try {
     preLoad.classList.remove('visually-hidden');
     const responce = await EventApi.fetchApiData();
+    preLoad.classList.add('visually-hidden');
     const eventsArrayFull = responce._embedded?.events;
     const totalPagesFromServer = responce.page.totalPages;
     const totalPagesOnSite =
       totalPagesFromServer - 1 > 62 ? 62 : totalPagesFromServer - 1;
-    // createPaginationOnLoad(totalPagesFromServer, totalPagesOnSite);
+
     if (!eventsArrayFull) {
       preLoad.classList.add('visually-hidden');
       refs.eventList.innerHTML = `<h3 class="section_title">No any event found in your country</h3>`;
@@ -26,29 +26,8 @@ export async function renderMarckup() {
       return;
     }
     const eventsArray = shortDataFromServer(eventsArrayFull);
-    preLoad.classList.add('visually-hidden');
-
     marckup(eventsArray);
-
-    // console.log(eventsArrayFull);
-    // console.log('pages', totalPagesFromServer);
     pag1(totalPagesFromServer);
-  } catch (error) {
-    console.log(error);
-  }
-}
-//render markup from local storage
-export async function renderMarckupFromLocalStorage() {
-  const localStorageData = localStorage.getItem('event');
-  try {
-    const eventsArrayFull = JSON.parse(localStorageData)._embedded?.events;
-    if (!eventsArrayFull) {
-      refs.eventList.innerHTML = `<h3 class="section_title">No any event found in your country</h3>`;
-      return;
-    }
-    console.log('after');
-    const eventsArray = shortDataFromServer(eventsArrayFull);
-    marckup(eventsArray);
   } catch (error) {
     console.log(error);
   }
@@ -115,9 +94,8 @@ function templateItems(event) {
 }
 //sort out array of objects from server [{1,2,3},{1,2,3}.....] => [{1}]
 function shortDataFromServer(eventsArrayFull) {
-  const arrayOfDesiredObjcts = eventsArrayFull.map(value =>
-    desiredObjectForPage(value)
-  );
+  const arrayOfDesiredObjcts = eventsArrayFull
+    .map((value, i, arr) => desiredObjectForPage(value));
   return arrayOfDesiredObjcts;
 }
 
