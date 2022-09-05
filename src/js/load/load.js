@@ -5,5 +5,5 @@ export async function saveCollectionToLocalStorage() {
         return
     }
     const responce = await EventApi.fetchApiData();
-    localStorage.setItem("event", JSON.stringify(responce));
+    // localStorage.setItem("event", JSON.stringify(responce));
 }

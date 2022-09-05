@@ -1,11 +1,13 @@
-import notiflix from 'notiflix'
+import { Notify } from 'notiflix';
 import { refs } from '../refs';
 import { onClickModalBuyBtn } from "./mini-modal"
-import { writeNewPost } from '../geo/log'
 import { auth } from '../geo/log'
+import { writeNewPost, removeEventFromDatabase, databaseListener } from '../geo/log'
+import { updateBasketNEW } from '../basket/basket'
+
 
 export function dataToCart(data) {
-
+  let updatedAnswer = null;
   const mini = {
     id: data.id,
     name: data.name,
@@ -15,17 +17,23 @@ export function dataToCart(data) {
     address: data._embedded.venues[0].address.line1,
     concertHall: data._embedded.venues[0].name,
   };
-  console.log(mini);
   refs.modalBuyBtn = document.querySelectorAll('.js-buy-btn');
 
   refs.modalBuyBtn.forEach(elem => {
     elem.addEventListener("click", () => {
       if (!auth.currentUser) {
-        notiflix.Notify.warning("This option only for registered users! Please register!")
+        Notify.warning("This option only for registered users! Please register!")
         return
       }
-      writeNewPost(mini);
       onClickModalBuyBtn(mini);
+      //відсилаємо дані на сервер
+      const newPostKey = writeNewPost(mini);
+      //встановлюємо таймер на автовидалення події з сервера через  2 хв
+      const delayToRemove = 60000;
+      const timerId = setTimeout(() => {
+        removeEventFromDatabase(auth, newPostKey)
+          .then(() => Notify.success('Time is over. Event removed from basket'))
+      }, delayToRemove, auth, newPostKey);
     });
 
   });

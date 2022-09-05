@@ -1,4 +1,4 @@
-import notiflix from 'notiflix';
+import notiflix, { Notify } from 'notiflix';
 import { initializeApp } from 'firebase/app';
 import {
   getAuth,
@@ -20,11 +20,10 @@ import {
   get,
   update,
   push,
+  onValue,
 } from 'firebase/database';
 //
-// import { config } from '../const';
-// console.log(config);
-import { clearAfterSignOut } from '../basket/basket'; //clean basket
+import { clearAfterSignOut, updateBasket } from '../basket/basket'; //clean basket
 //Файл настройок для ФАЯБЕЙЗА з акаунту
 const firebaseConfig = {
   apiKey: 'AIzaSyA1qR_n73lnbDIB96TfK_yMCuERhUDCeuA',
@@ -169,18 +168,17 @@ async function signUpUser() {
 
 //===========================БД
 // запис в базу даних повний перезапис всіх данних за значнням ключа
-function writeUserData(userId = 0, user) {
-  userId = user.uid;
-  const db = getDatabase(app);
-  set(ref(db, 'users/' + userId), {
-    uid: user.uid,
-    email: user.email,
-    lastLogged: user.metadata.lastSignInTime,
-  });
+export function removeEventFromDatabase(auth, newPostKey) {
+  const userId = auth?.currentUser?.uid;
+  return set(ref(database, 'users/' + userId + '/' + newPostKey), null);
+}
+//
+export function removeAllEvents() {
+  const userId = auth?.currentUser?.uid;
+  return set(ref(database, 'users/' + userId), null)
+    .then(() => Notify.success('All events removed from basket'));
 }
 //читаєм базу данних - запрос на сервер
-
-
 export async function readDataFromServer(auth) {
   try {
     if (!auth.currentUser) {
@@ -194,43 +192,33 @@ export async function readDataFromServer(auth) {
     } else {
       console.log("No data available");
     }
-    // get(child(dbRef, `users/${path}`)).then((snapshot) => {
-    //   if (snapshot.exists()) {
-    //     console.log(Object.values(snapshot.val()));
-    //   } else {
-    //     console.log("No data available");
-    //   }
-    // })
   } catch (error) {
     console.log(error);
   }
 
 }
 
-
-
-
-
 //Доповнення інформації без витирання внесеної інформації
 export function writeNewPost(mini) {
   try {
-    // let postData = JSON.parse(localStorage.getItem('userBasket'));
     const userId = auth?.currentUser?.uid;
     const db = getDatabase(app);
     // Get a key for a new Post.
     const newPostKey = push(child(ref(db), `users/`)).key;
-    // console.log(newPostKey);
+    mini.newPostKey = newPostKey;
     // Write the new post's data simultaneously in the posts list and the user's post list.
     const updates = {};
     // updates['/posts/' + newPostKey] = postData;
     updates['users/' + userId + '/' + newPostKey] = mini;
     // updates['/user-posts/' + uid + '/' + newPostKey] = postData;
-
-    return update(ref(db), updates);
+    update(ref(db), updates).then(() => Notify.success('Event added to basket'));
+    return newPostKey;
   } catch (error) {
-    console.log(error);
+    Notify.failure(`${error.message}`)
   }
 }
+
+
 
 //=================================================
 //створення розмітки форми по натиску
@@ -283,6 +271,17 @@ onAuthStateChanged(auth, user => {
     logBtn.classList.add('js-hidden');
     signOutBtn.classList.remove('js-hidden');
     signOutBtn.addEventListener('click', userAway);
+    //===== додаємо слухача БД по заданому шляху
+    const userId = auth.currentUser.uid;
+    const starCountRef = ref(database, 'users/' + userId);
+    onValue(starCountRef, (snapshot) => {
+      let data = null;
+      if (snapshot.exists()) {
+        data = Object.values(snapshot.val());
+      }
+      console.log('273 LOG', data);
+      updateBasket(data)
+    });
   } else {
     logBtn.addEventListener('click', createForm);
     logBtn.classList.remove('js-hidden');

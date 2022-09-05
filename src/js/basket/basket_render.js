@@ -1,14 +1,23 @@
 import { refs } from "../refs";
-export { renderBasketMarkup }
 
-function renderBasketMarkup(data) {
+export function renderBasketMarkup(data) {
+  if (!data) {
+    return
+  }
   let markup = '';
+  let uniqId = [];
+  let uniqArrId = [];
+  for (const el of data) {
+    if (uniqId.includes(el.id)) {
+      continue
+    }
+    uniqId.push(el.id);
+    uniqArrId.push(el);
+  }
 
-  let uniqArrId = [...new Set(data)];
-  console.log(uniqArrId);
   uniqArrId.forEach((item) => {
     let count = 0;
-    let { name, images, country: nameCountry, city: nameCity, id: eventId } = item;
+    let { name, images, country: nameCountry, city: nameCity, id: eventId, newPostKey } = item;
 
     data.forEach((value) => {
       if (value.id === item.id) {
@@ -24,9 +33,9 @@ function renderBasketMarkup(data) {
     <div class="location__container">
       <svg class="location_icons" width="6" height="9" xmlns="http://www.w3.org/2000/svg"><path d="M3 0C1.346 0 0 1.403 0 3.128 0 5.296 3.003 9 3.003 9S6 5.19 6 3.128C6 1.403 4.654 0 3 0Zm.905 4.044c-.25.26-.577.39-.905.39a1.25 1.25 0 0 1-.905-.39c-.5-.52-.5-1.367 0-1.887a1.246 1.246 0 0 1 1.81 0c.5.52.5 1.367 0 1.887Z"/></svg>
       <p class="location__text">${nameCity}, ${nameCountry}</p>
-      </div></div><div class="close__box">
-      <svg class="closes__icon" width="10" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M9.825 0.989l-0.989-0.989-3.923 3.923-3.923-3.923-0.989 0.989 3.923 3.923-3.923 3.923 0.989 0.989 3.923-3.923 3.923 3.923 0.989-0.989-3.923-3.923 3.923-3.923z"/></svg>
-      </div></li>`;
+      </div></div>
+      <button type="button" class="basket__button--close" data-key="${newPostKey}"> </button type="button">
+      </li>`;
   })
   refs.basketMarkupContainer.innerHTML = markup;
 }
