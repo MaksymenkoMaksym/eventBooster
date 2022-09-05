@@ -21,9 +21,11 @@ import {
   update,
   push,
   onValue,
+  off,
 } from 'firebase/database';
 //
 import { clearAfterSignOut, updateBasket } from '../basket/basket'; //clean basket
+import { off } from 'process';
 //Файл настройок для ФАЯБЕЙЗА з акаунту
 const firebaseConfig = {
   apiKey: 'AIzaSyA1qR_n73lnbDIB96TfK_yMCuERhUDCeuA',
@@ -46,6 +48,8 @@ const provider2 = new GithubAuthProvider();
 const database = getDatabase(app);
 //шлях до БД
 const dbRef = ref(database);
+//
+const userId = auth?.currentUser?.uid;
 //==========================================================
 
 //отримуємо доступ до кнопки входу в аккаунт і шапки сайту для створення дин. розмітки
@@ -136,6 +140,7 @@ function userAway(params) {
       // Sign-out successful.
 
       clearAfterSignOut();
+      off(ref(database, 'users/' + userId));
     })
     .catch(error => {
       notiflix.Notify.failure(`${error.message}`);
@@ -160,8 +165,7 @@ async function signUpUser() {
     console.log(userCredential);
     notiflix.Notify.success(`New accaunt created. Sign in please!`);
   } catch (error) {
-    // console.log(error.code);
-    // console.log(error.message);
+
     notiflix.Notify.failure(`${(error.code, error.message)}`);
   }
 }
