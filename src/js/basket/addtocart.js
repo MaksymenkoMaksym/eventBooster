@@ -1,13 +1,10 @@
 import { Notify } from 'notiflix';
 import { refs } from '../refs';
 import { onClickModalBuyBtn } from "./mini-modal"
-import { auth } from '../geo/log'
-import { writeNewPost, removeEventFromDatabase, databaseListener } from '../geo/log'
-import { updateBasketNEW } from '../basket/basket'
+import { auth, writeNewPost, removeEventFromDatabase } from '../geo/log'
 
 
 export function dataToCart(data) {
-  let updatedAnswer = null;
   const mini = {
     id: data.id,
     name: data.name,
@@ -28,12 +25,14 @@ export function dataToCart(data) {
       onClickModalBuyBtn(mini);
       //відсилаємо дані на сервер
       const newPostKey = writeNewPost(mini);
-      //встановлюємо таймер на автовидалення події з сервера через  2 хв
-      const delayToRemove = 60000;
-      const timerId = setTimeout(() => {
-        removeEventFromDatabase(auth, newPostKey)
-          .then(() => Notify.success('Time is over. Event removed from basket'))
-      }, delayToRemove, auth, newPostKey);
+      //встановлюємо таймер на автовидалення події з сервера через  1 хв
+      /*
+       const delayToRemove = 60000;
+       const timerId = setTimeout(() => {
+         removeEventFromDatabase(auth, newPostKey)
+           .then(() => Notify.success('Time is over. Event removed from basket'))
+       }, delayToRemove, auth, newPostKey);
+       */
     });
 
   });

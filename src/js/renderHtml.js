@@ -13,10 +13,12 @@ export async function renderMarckup() {
   try {
     preLoad.classList.remove('visually-hidden');
     const responce = await EventApi.fetchApiData();
+    preLoad.classList.add('visually-hidden');
     const eventsArrayFull = responce._embedded?.events;
     const totalPagesFromServer = responce.page.totalPages;
     const totalPagesOnSite =
       totalPagesFromServer - 1 > 62 ? 62 : totalPagesFromServer - 1;
+
     if (!eventsArrayFull) {
       preLoad.classList.add('visually-hidden');
       refs.eventList.innerHTML = `<h3 class="section_title">No any event found in your country</h3>`;
@@ -24,29 +26,8 @@ export async function renderMarckup() {
       return;
     }
     const eventsArray = shortDataFromServer(eventsArrayFull);
-    preLoad.classList.add('visually-hidden');
-
     marckup(eventsArray);
-
-    // console.log(eventsArrayFull);
-    // console.log('pages', totalPagesFromServer);
     pag1(totalPagesFromServer);
-  } catch (error) {
-    console.log(error);
-  }
-}
-//render markup from local storage
-export async function renderMarckupFromLocalStorage() {
-  const localStorageData = localStorage.getItem('event');
-  try {
-    const eventsArrayFull = JSON.parse(localStorageData)._embedded?.events;
-    if (!eventsArrayFull) {
-      refs.eventList.innerHTML = `<h3 class="section_title">No any event found in your country</h3>`;
-      return;
-    }
-    console.log('after');
-    const eventsArray = shortDataFromServer(eventsArrayFull);
-    marckup(eventsArray);
   } catch (error) {
     console.log(error);
   }
@@ -113,9 +94,8 @@ function templateItems(event) {
 }
 //sort out array of objects from server [{1,2,3},{1,2,3}.....] => [{1}]
 function shortDataFromServer(eventsArrayFull) {
-  const arrayOfDesiredObjcts = eventsArrayFull.map(value =>
-    desiredObjectForPage(value)
-  );
+  const arrayOfDesiredObjcts = eventsArrayFull
+    .map((value, i, arr) => desiredObjectForPage(value));
   return arrayOfDesiredObjcts;
 }
 

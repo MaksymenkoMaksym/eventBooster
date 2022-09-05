@@ -181,16 +181,11 @@ export function removeAllEvents() {
 //читаєм базу данних - запрос на сервер
 export async function readDataFromServer(auth) {
   try {
-    if (!auth.currentUser) {
-      return console.log('зайдіть в аккаунт');
-    }
     const path = auth.currentUser.uid;
     const snapshot = await get(child(dbRef, `users/${path}`));
 
     if (snapshot.exists()) {
       return Promise.resolve(Object.values(snapshot.val()));
-    } else {
-      console.log("No data available");
     }
   } catch (error) {
     console.log(error);
@@ -279,7 +274,6 @@ onAuthStateChanged(auth, user => {
       if (snapshot.exists()) {
         data = Object.values(snapshot.val());
       }
-      console.log('273 LOG', data);
       updateBasket(data)
     });
   } else {

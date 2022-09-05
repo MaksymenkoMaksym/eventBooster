@@ -14,13 +14,15 @@ refs.basketBuyBtn.addEventListener("click", onClickBuyBtn);
 refs.basketClearBtn.addEventListener("click", onClickClearBtn);
 
 export async function onBasketShow() {
-    let answer = await readDataFromServer(auth)
-
+    let answer = null;
+    if (auth.currentUser) {
+        answer = await readDataFromServer(auth);
+    }
     document.body.classList.toggle("no-scroll");
     refs.basketModal.classList.toggle("hidden");
 
-    refs.basketQuantity.textContent = answer?.length || '';
-    refs.basketNum.textContent = answer?.length || '';
+    refs.basketQuantity.textContent = answer ? answer.length : 0;
+    refs.basketNum.textContent = answer ? answer.length : 0;
 
     renderBasketMarkup(answer)
 
@@ -71,6 +73,7 @@ export function updateBasket(updatedAnswer) {
         refs.basketQuantity.textContent = updatedAnswer.length;
         refs.basketNum.textContent = updatedAnswer.length;
         refs.basketNumHead.textContent = updatedAnswer.length;
+        updatedAnswer.length != 1 ? refs.basketTextTicket.textContent = "tickets" : refs.basketTextTicket.textContent = "ticket";
         refs.basketContainerHead.classList.remove("hidden")
     }
 }
